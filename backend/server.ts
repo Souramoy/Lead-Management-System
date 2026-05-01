@@ -9,13 +9,18 @@ dotenv.config();
 async function startServer() {
   const app = express();
   const PORT = Number(process.env.PORT) || 3000;
-  const frontendUrl = process.env.FRONTEND_URL;
 
   app.use(
     cors({
-      origin: frontendUrl || true,
+      origin: [
+        'http://localhost:5173',
+        'https://lead-management-system-rho.vercel.app'
+      ],
+      methods: ['GET', 'POST', 'PUT', 'DELETE'],
+      credentials: true
     })
   );
+  app.options('*', cors());
   app.use(express.json());
 
   if (process.env.DATABASE_URL) {
@@ -26,8 +31,8 @@ async function startServer() {
 
   app.use('/api/leads', leadRoutes);
 
-  app.listen(PORT, "localhost", () => {
-    console.log(`API server running on http://localhost:${PORT}`);
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
   });
 }
 
